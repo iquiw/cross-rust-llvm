@@ -1,0 +1,59 @@
+name: LLVM
+
+on:
+  push:
+    tags:
+     - '*'
+
+jobs:
+  build:
+    name: Build LLVM
+    runs-on: ubuntu-latest
+    container: iquiw/cross-netbsd:i386
+    steps:
+      - name: Checout rust
+        uses: actions/checkout@v2
+        with:
+          repository: rust-lang/rust
+          ref: 1.48.0
+          submodules: true
+
+      - name: Build
+        run: |
+          python3 x.py build llvm --stage 1
+
+          tar cJf llvm-i686-unknown-netbsd.txz build/i686-unknown-netbsd/llvm/{bin,include,lib,share,llvm-finished-building} build/i686-unknown-netbsd/llvm/build/bin/{llvm-config,FileCheck}
+          tar cJf llvm-x86_64-unknown-linux-gnu.txz build/x86_64-unknown-linux-gnu/llvm/{bin,include,lib,share,llvm-finished-building} build/x86_64-unknown-linux-gnu/llvm/build/bin/{llvm-config,FileCheck}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload LLVM x86_64-unknown-linux-gnu archive
+        id: upload-llvm-linux
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./llvm-x86_64-unknown-linux-gnu.txz
+          asset_name: llvm-x86_64-unknown-linux-gnu.txz
+          asset_content_type: application/octet-stream
+
+      - name: Upload LLVM i686-unknown-netbsd archive
+        id: upload-llvm-netbsd
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./llvm-i686-unknown-netbsd.txz
+          asset_name: llvm-i686-unknown-netbsd.txz
+          asset_content_type: application/octet-stream
