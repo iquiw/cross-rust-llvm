@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: iquiw/cross-netbsd:i386
     steps:
-      - name: Checout rust
+      - name: Checkout rust
         uses: actions/checkout@v2
         with:
           repository: rust-lang/rust
