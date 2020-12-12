@@ -20,7 +20,7 @@ jobs:
 
       - name: Build
         run: |
-          python3 x.py build llvm --stage 1
+          python3 x.py build llvm --host $HOSTS --target $HOSTS --stage 1
 
           tar cJf llvm-i686-unknown-netbsd.txz build/i686-unknown-netbsd/llvm/{bin,include,lib,share,llvm-finished-building} build/i686-unknown-netbsd/llvm/build/bin/{llvm-config,FileCheck}
           tar cJf llvm-x86_64-unknown-linux-gnu.txz build/x86_64-unknown-linux-gnu/llvm/{bin,include,lib,share,llvm-finished-building} build/x86_64-unknown-linux-gnu/llvm/build/bin/{llvm-config,FileCheck}
