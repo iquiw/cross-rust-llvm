@@ -29,6 +29,8 @@ jobs:
 
           tar cJf llvm-i686-unknown-netbsd.txz build/i686-unknown-netbsd/llvm/bin build/i686-unknown-netbsd/llvm/include build/i686-unknown-netbsd/llvm/lib build/i686-unknown-netbsd/llvm/share build/i686-unknown-netbsd/llvm/llvm-finished-building build/i686-unknown-netbsd/llvm/build/bin/llvm-config build/i686-unknown-netbsd/llvm/build/bin/FileCheck
           tar cJf llvm-x86_64-unknown-linux-gnu.txz build/x86_64-unknown-linux-gnu/llvm/bin build/x86_64-unknown-linux-gnu/llvm/include build/x86_64-unknown-linux-gnu/llvm/lib build/x86_64-unknown-linux-gnu/llvm/share build/x86_64-unknown-linux-gnu/llvm/llvm-finished-building build/x86_64-unknown-linux-gnu/llvm/build/bin/llvm-config build/x86_64-unknown-linux-gnu/llvm/build/bin/FileCheck
+        env:
+          HOSTS: i686-unknown-netbsd
 
       - name: Create Release
         id: create_release
