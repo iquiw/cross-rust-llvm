@@ -10,12 +10,14 @@ jobs:
     name: Build LLVM
     runs-on: ubuntu-latest
     container: iquiw/cross-netbsd:i386
+    env:
+      RUST_VERSION: 1.56.0
     steps:
       - name: Checkout rust
         uses: actions/checkout@v2
         with:
           repository: rust-lang/rust
-          ref: 1.56.0
+          ref: ${{ env.RUST_VERSION }}
           submodules: true
 
       - name: Build
@@ -33,34 +35,9 @@ jobs:
           HOSTS: i686-unknown-netbsd
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: llvm ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload LLVM x86_64-unknown-linux-gnu archive
-        id: upload-llvm-linux
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./llvm-x86_64-unknown-linux-gnu.txz
-          asset_name: llvm-x86_64-unknown-linux-gnu.txz
-          asset_content_type: application/octet-stream
-
-      - name: Upload LLVM i686-unknown-netbsd archive
-        id: upload-llvm-netbsd
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./llvm-i686-unknown-netbsd.txz
-          asset_name: llvm-i686-unknown-netbsd.txz
-          asset_content_type: application/octet-stream
+          artifacts: "llvm-x86_64-unknown-linux-gnu.txz,llvm-i686-unknown-netbsd.txz"
+          artifactContentType: application/octet-stream
+          name: llvm ${{ env.RUST_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
